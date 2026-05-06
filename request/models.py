@@ -1,6 +1,7 @@
 from django.db import models
 from abstracts_models.soft_delete_model import SoftDeleteModel
 from abstracts_models.time_stamped_model import TimeStampedModel
+from first_bank_e_account_back import settings
 
 
 class Request(TimeStampedModel ,SoftDeleteModel):
@@ -32,7 +33,11 @@ class SupportingDocument(SoftDeleteModel, TimeStampedModel):
     request = models.ForeignKey(Request, on_delete=models.CASCADE, related_name='document')
     file = models.ImageField(upload_to='identity_docs/%Y/%m/%d/')
 
-
-    
-
-
+class Decision(TimeStampedModel, SoftDeleteModel):
+    class DecisionType(models.TextChoices):
+        APPROVED = 'approved', 'Approuver'
+        REJECTED = 'rejected', 'Rejeté'
+    request = models.OneToOneField('Request', on_delete=models.CASCADE, related_name='decision')
+    agent = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    decision_type = models.CharField(max_length=20, choices=DecisionType.choices)
+    motivation = models.TextField()

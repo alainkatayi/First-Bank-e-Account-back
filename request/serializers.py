@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Request, SupportingDocument
+from .models import Request, SupportingDocument, Decision
 
     
 class SupportingDocumentSerializer(serializers.ModelSerializer):
@@ -50,3 +50,11 @@ class RequestSerializer(serializers.ModelSerializer):
         if not value.startswith('+243') and not value.startswith('0'):
             raise serializers.ValidationError("Le numéro doit commencer par +243 ou 0.")
         return value
+    
+class DecisionSerializer(serializers.ModelSerializer):
+    motivation = serializers.CharField(required=True)
+    decision_type = serializers.CharField(required=True)
+    class Meta:
+        model = Decision
+        fields = ['id','decision_type', 'motivation','agent','request']
+        read_only_fields = ['id','agent','request']
