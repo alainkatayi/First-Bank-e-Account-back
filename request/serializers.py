@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Request, SupportingDocument
+from .models import Request, SupportingDocument, Decision
+from accounts.serializers import UserSerializer
 
     
 class SupportingDocumentSerializer(serializers.ModelSerializer):
@@ -9,8 +10,8 @@ class SupportingDocumentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SupportingDocument
-        fields = ['id', 'request', 'file', 'file_url', 'created']
-        read_only_fields = ['id', 'created']
+        fields = ['id', 'request', 'file', 'file_url', 'created_at']
+        read_only_fields = ['id', 'created_at']
 
     def get_file_url(self, obj):
         if obj.file:
@@ -50,3 +51,13 @@ class RequestSerializer(serializers.ModelSerializer):
         if not value.startswith('+243') and not value.startswith('0'):
             raise serializers.ValidationError("Le numéro doit commencer par +243 ou 0.")
         return value
+    
+class DecisionSerializer(serializers.ModelSerializer):
+    agent = UserSerializer(read_only = True)
+    request = RequestSerializer(read_only = True)
+    motivation = serializers.CharField(required=True)
+    decision_type = serializers.CharField(required=True)
+    class Meta:
+        model = Decision
+        fields = ['id','decision_type', 'motivation','agent','request']
+        read_only_fields = ['id','agent','request']
