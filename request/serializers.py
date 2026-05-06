@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Request, SupportingDocument, Decision
+from accounts.serializers import UserSerializer
 
     
 class SupportingDocumentSerializer(serializers.ModelSerializer):
@@ -52,6 +53,8 @@ class RequestSerializer(serializers.ModelSerializer):
         return value
     
 class DecisionSerializer(serializers.ModelSerializer):
+    agent = UserSerializer(read_only = True)
+    request = RequestSerializer(read_only = True)
     motivation = serializers.CharField(required=True)
     decision_type = serializers.CharField(required=True)
     class Meta:

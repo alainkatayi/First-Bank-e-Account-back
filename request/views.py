@@ -1,6 +1,6 @@
 from rest_framework import status
 from rest_framework.response import Response
-from .models import SupportingDocument
+from .models import SupportingDocument, Decision
 from .serializers import RequestSerializer, DecisionSerializer
 from rest_framework.views import APIView
 from rest_framework.permissions import  AllowAny, IsAuthenticated
@@ -78,3 +78,9 @@ class TakeDecisionView(APIView):
             except Exception as e:
                 return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class DecisionListView(ListAPIView):
+    queryset = Decision.objects.all().order_by('-created_at')
+    serializer_class = DecisionSerializer
+    permission_classes = [IsAuthenticated, IsAdminOrAgent]
+    pagination_class = Pagination
