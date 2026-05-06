@@ -3,10 +3,14 @@ from rest_framework.response import Response
 from .models import SupportingDocument
 from .serializers import RequestSerializer
 from rest_framework.views import APIView
-from rest_framework.permissions import  AllowAny
+from rest_framework.permissions import  AllowAny, IsAuthenticated
 from rest_framework import status
 from django.db import transaction
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.generics import ListAPIView
+from .models import Request
+from abstracts_models.permission import IsAdminOrAgent
+from abstracts_models.pagination import Pagination
 # Create your views here.
 class RequestCreatedView(APIView):
     permission_classes = [AllowAny]
@@ -38,3 +42,10 @@ class RequestCreatedView(APIView):
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                 )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class RequestListView(ListAPIView):
+    queryset = Request.objects.all().order_by('-created_at')
+    serializer_class = RequestSerializer
+    #on verifie l'authentifiation et le role
+    permission_classes = [IsAuthenticated, IsAdminOrAgent]
+    pagination_class = Pagination

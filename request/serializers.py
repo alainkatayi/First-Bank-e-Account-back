@@ -9,8 +9,8 @@ class SupportingDocumentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SupportingDocument
-        fields = ['id', 'request', 'file', 'file_url', 'created']
-        read_only_fields = ['id', 'created']
+        fields = ['id', 'request', 'file', 'file_url', 'created_at']
+        read_only_fields = ['id', 'created_at']
 
     def get_file_url(self, obj):
         if obj.file:
