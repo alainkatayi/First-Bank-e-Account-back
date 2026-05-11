@@ -7,7 +7,7 @@ from rest_framework.permissions import  AllowAny, IsAuthenticated
 from rest_framework import status
 from django.db import transaction
 from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from .models import Request
 from abstracts_models.permission import IsAdminOrAgent
 from abstracts_models.pagination import Pagination
@@ -49,6 +49,15 @@ class RequestListView(ListAPIView):
     #on verifie l'authentifiation et le role
     permission_classes = [IsAuthenticated, IsAdminOrAgent]
     pagination_class = Pagination
+
+#class pour ne voir qu'une seule request
+class RequestDetailView(RetrieveAPIView):
+    queryset = Request.objects.all()
+    serializer_class = RequestSerializer
+    # On garde les mêmes sécurités que pour la liste
+    permission_classes = [IsAuthenticated, IsAdminOrAgent]
+    # Par défaut, DRF cherche par 'id', mais tu peux préciser :
+    lookup_field = 'id'
 
 #class pour la prise de decision sur une request(demande d'ouverture)
 #deux cas possible: refus ou acceptation
